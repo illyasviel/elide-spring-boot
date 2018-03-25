@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+logging:
+  level:
+    root: info
+#    org.illyasviel.elide: debug
+#    org.hibernate.SQL: debug
+#    org.hibernate.type: trace
+#    org.hibernate.type.descriptor.sql: trace

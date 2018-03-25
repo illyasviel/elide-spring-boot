@@ -1,0 +1,1 @@
+provides: elide-spring-boot-autoconfigure,elide-core,elide-datastore-hibernate5

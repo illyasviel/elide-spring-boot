@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.illyasviel.elide.spring.boot.autoconfigure.ElideAutoConfiguration,\
+  org.illyasviel.elide.spring.boot.autoconfigure.ElideControllerAutoConfiguration
