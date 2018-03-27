@@ -1,0 +1,14 @@
+language: java
+jdk:
+  - oraclejdk9
+  - oraclejdk8
+  - openjdk8
+install:
+  # Compile sources with Java 1.8
+  - jdk_switcher use oraclejdk8
+  - chmod -R 777 ./mvnw
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  # Switch back to the original JDK to run the tests
+  - jdk_switcher use ${TRAVIS_JDK_VERSION}
+after_success:
+  - ./mvnw clean test jacoco:report coveralls:report -Dcoveralls.token=$COVERALLS
