@@ -95,6 +95,7 @@
     <spring-boot.version>2.0.0.RELEASE</spring-boot.version>
     <elide.version>4.2.0</elide.version>
     <classindex.version>3.4</classindex.version>
+    <jaxb-api.version>2.3.0</jaxb-api.version>
   </properties>
 
   <dependencyManagement>
@@ -111,6 +112,12 @@
         <groupId>org.atteo.classindex</groupId>
         <artifactId>classindex</artifactId>
         <version>${classindex.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>${jaxb-api.version}</version>
       </dependency>
 
       <dependency>
