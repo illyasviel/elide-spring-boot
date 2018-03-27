@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 import org.illyasviel.elide.spring.boot.check.RejectAll;
 
 /**
@@ -36,6 +37,7 @@ import org.illyasviel.elide.spring.boot.check.RejectAll;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Audited
 @Entity
 @Include(rootLevel = true)
 @ReadPermission(expression = RejectAll.INLINE_REJECT)
