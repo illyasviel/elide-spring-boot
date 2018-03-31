@@ -23,6 +23,8 @@ import java.io.IOException;
 import javax.persistence.PersistenceException;
 import org.hibernate.ScrollMode;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
+import org.illyasviel.elide.spring.boot.exception.UnprocessableEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -64,8 +66,12 @@ public class SpringHibernateTransaction extends HibernateTransaction {
     try {
       super.flush(requestScope);
     } catch (PersistenceException e) {
-      logger.error("Caught persistence exception during flush", e);
-      throw new TransactionException(e);
+      if (e.getCause() instanceof ConstraintViolationException) {
+        throw new UnprocessableEntityException("Some fields violate constraint(notnull, unique, ...)", e);
+      } else {
+        logger.error("Caught persistence exception during flush", e);
+        throw new TransactionException(e);
+      }
     }
   }
 

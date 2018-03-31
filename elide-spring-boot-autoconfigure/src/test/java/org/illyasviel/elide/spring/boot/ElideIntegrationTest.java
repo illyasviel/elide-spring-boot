@@ -290,6 +290,6 @@ public class ElideIntegrationTest {
         .content(postBook)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
-        .andExpect(status().isLocked());
+        .andExpect(status().isUnprocessableEntity());
   }
 }
