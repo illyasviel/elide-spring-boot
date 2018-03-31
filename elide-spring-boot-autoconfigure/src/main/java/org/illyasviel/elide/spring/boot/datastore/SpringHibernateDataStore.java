@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
 import org.hibernate.ScrollMode;
 import org.hibernate.Session;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -35,7 +36,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * @author olOwOlo
  */
 public class SpringHibernateDataStore implements DataStore {
+
   protected final PlatformTransactionManager txManager;
+  protected final AutowireCapableBeanFactory beanFactory;
   protected final EntityManager entityManager;
   protected final boolean isScrollEnabled;
   protected final ScrollMode scrollMode;
@@ -45,13 +48,17 @@ public class SpringHibernateDataStore implements DataStore {
    * Constructor.
    *
    * @param txManager Spring PlatformTransactionManager
+   * @param beanFactory Spring AutowireCapableBeanFactory
    * @param entityManager EntityManager
    * @param isScrollEnabled Whether or not scrolling is enabled on driver
    * @param scrollMode Scroll mode to use for scrolling driver
    */
   public SpringHibernateDataStore(PlatformTransactionManager txManager,
-      EntityManager entityManager, boolean isScrollEnabled, ScrollMode scrollMode) {
-    this(txManager, entityManager, isScrollEnabled, scrollMode, SpringHibernateTransaction::new);
+      AutowireCapableBeanFactory beanFactory,
+      EntityManager entityManager,
+      boolean isScrollEnabled,
+      ScrollMode scrollMode) {
+    this(txManager, beanFactory, entityManager, isScrollEnabled, scrollMode, SpringHibernateTransaction::new);
   }
 
   /**
@@ -61,17 +68,20 @@ public class SpringHibernateDataStore implements DataStore {
    * to instantiate custom hibernate transaction.
    *
    * @param txManager Spring PlatformTransactionManager
+   * @param beanFactory Spring AutowireCapableBeanFactory
    * @param entityManager EntityManager factory
    * @param isScrollEnabled Whether or not scrolling is enabled on driver
    * @param scrollMode Scroll mode to use for scrolling driver
    * @param transactionSupplier Supplier for transaction
    */
   protected SpringHibernateDataStore(PlatformTransactionManager txManager,
+      AutowireCapableBeanFactory beanFactory,
       EntityManager entityManager,
       boolean isScrollEnabled,
       ScrollMode scrollMode,
       HibernateTransactionSupplier transactionSupplier) {
     this.txManager = txManager;
+    this.beanFactory = beanFactory;
     this.entityManager = entityManager;
     this.isScrollEnabled = isScrollEnabled;
     this.scrollMode = scrollMode;
@@ -92,7 +102,9 @@ public class SpringHibernateDataStore implements DataStore {
             dictionary.lookupEntityClass(mappedClass);
             // Bind if successful
             dictionary.bindEntity(mappedClass);
-          } catch (IllegalArgumentException e)  {
+            // Bind Spring Dependency Injection
+            dictionary.bindInitializer(beanFactory::autowireBean, mappedClass);
+          } catch (IllegalArgumentException e) {
             // Ignore this entity
             // Turns out that hibernate may include non-entity types in this list when using things
             // like envers. Since they are not entities, we do not want to bind them into the entity

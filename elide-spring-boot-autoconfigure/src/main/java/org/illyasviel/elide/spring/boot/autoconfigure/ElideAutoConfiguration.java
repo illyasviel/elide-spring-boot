@@ -33,6 +33,7 @@ import org.illyasviel.elide.spring.boot.annotation.ElideCheck;
 import org.illyasviel.elide.spring.boot.datastore.SpringHibernateDataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -55,6 +56,7 @@ public class ElideAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public Elide elide(PlatformTransactionManager txManager,
+      AutowireCapableBeanFactory beanFactory,
       EntityManager entityManager,
       ObjectMapper objectMapper) {
     ConcurrentHashMap<String, Class<? extends Check>> checks = new ConcurrentHashMap<>();
@@ -72,7 +74,7 @@ public class ElideAutoConfiguration {
     EntityDictionary entityDictionary = new EntityDictionary(checks);
     RSQLFilterDialect rsqlFilterDialect = new RSQLFilterDialect(entityDictionary);
 
-    DataStore springDataStore = new SpringHibernateDataStore(txManager, entityManager,
+    DataStore springDataStore = new SpringHibernateDataStore(txManager, beanFactory, entityManager,
         true, ScrollMode.FORWARD_ONLY);
 
     return new Elide(new ElideSettingsBuilder(springDataStore)
