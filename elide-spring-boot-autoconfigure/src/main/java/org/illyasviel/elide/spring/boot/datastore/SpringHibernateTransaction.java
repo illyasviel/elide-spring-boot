@@ -20,9 +20,11 @@ import com.yahoo.elide.core.RequestScope;
 import com.yahoo.elide.core.exceptions.TransactionException;
 import com.yahoo.elide.datastores.hibernate5.HibernateTransaction;
 import java.io.IOException;
-import org.hibernate.HibernateException;
+import javax.persistence.PersistenceException;
 import org.hibernate.ScrollMode;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 
@@ -30,6 +32,8 @@ import org.springframework.transaction.TransactionStatus;
  * @author olOwOlo
  */
 public class SpringHibernateTransaction extends HibernateTransaction {
+
+  private static final Logger logger = LoggerFactory.getLogger(SpringHibernateTransaction.class);
 
   private final Session session;
   private final TransactionStatus txStatus;
@@ -56,11 +60,21 @@ public class SpringHibernateTransaction extends HibernateTransaction {
   }
 
   @Override
+  public void flush(RequestScope requestScope) {
+    try {
+      super.flush(requestScope);
+    } catch (PersistenceException e) {
+      logger.error("Caught persistence exception during flush", e);
+      throw new TransactionException(e);
+    }
+  }
+
+  @Override
   public void commit(RequestScope scope) {
     try {
       flush(scope);
       txManager.commit(txStatus);
-    } catch (HibernateException e) {
+    } catch (org.springframework.transaction.TransactionException e) {
       throw new TransactionException(e);
     }
   }

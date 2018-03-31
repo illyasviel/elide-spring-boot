@@ -18,6 +18,7 @@ package org.illyasviel.elide.spring.boot.domain;
 
 import com.yahoo.elide.annotation.Include;
 import com.yahoo.elide.annotation.SharePermission;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,6 +46,7 @@ public class Book {
   private String name;
   private Short price;
   private Author author;
+  private Integer uniqueNumber;
 
   @Id
   @GeneratedValue(generator = "book_g", strategy = GenerationType.SEQUENCE)
@@ -65,4 +67,10 @@ public class Book {
   public Author getAuthor() {
     return author;
   }
+
+  @Column(unique = true)
+  public Integer getUniqueNumber() {
+    return uniqueNumber;
+  }
+
 }

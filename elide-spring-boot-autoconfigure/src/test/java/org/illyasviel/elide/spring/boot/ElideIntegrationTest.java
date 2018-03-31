@@ -95,7 +95,7 @@ public class ElideIntegrationTest {
   }
 
   @Test
-  public void testAPrepareData() {
+  public void test1APrepareData() {
     // do nothing, init data
   }
 
@@ -271,5 +271,25 @@ public class ElideIntegrationTest {
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.errors[0]").isString());
+  }
+
+  @Transactional
+  @Test
+  public void testPersistenceException() throws Exception {
+    String postBook = "{\"data\": {\"type\": \"book\",\"attributes\": {\"name\": \"bookName\",\"price\": \"100\",\"uniqueNumber\": \"1\"},\"relationships\": {\"author\": {\"data\": {\"type\": \"author\",\"id\": \"1\"}}}}}";
+
+    mockMvc.perform(post("/book")
+        .contentType(JSON_API_CONTENT_TYPE)
+        .content(postBook)
+        .accept(JSON_API_CONTENT_TYPE))
+        .andExpect(content().contentType(JSON_API_RESPONSE))
+        .andExpect(status().isCreated());
+
+    mockMvc.perform(post("/book")
+        .contentType(JSON_API_CONTENT_TYPE)
+        .content(postBook)
+        .accept(JSON_API_CONTENT_TYPE))
+        .andExpect(content().contentType(JSON_API_RESPONSE))
+        .andExpect(status().isLocked());
   }
 }
