@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package org.illyasviel.elide.spring.boot.autoconfigure;
+package org.illyasviel.elide.spring.boot.exception;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @author olOwOlo
  */
-@Data
-@ConfigurationProperties(prefix = "elide")
-public class ElideProperties {
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
 
-  private String prefix = "/api";
-  private MVCProperties mvc;
+  private static final long serialVersionUID = 790856510206643400L;
 
-  @Data
-  public static class MVCProperties {
-
-    private boolean enable = true;
-    private boolean get = true;
-    private boolean post = true;
-    private boolean patch = true;
-    private boolean delete = true;
+  public ResourceNotFoundException() {
+    super();
   }
 }

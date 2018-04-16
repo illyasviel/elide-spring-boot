@@ -54,6 +54,7 @@ public class ElidePropertiesTest {
   @Test
   public void testElideProperties() {
     assertThat(elideProperties.getMvc().isEnable()).isTrue();
+    assertThat(elideProperties.getPrefix()).isEqualTo("/api");
     assertThat(elideProperties.getMvc().isGet()).isTrue();
     assertThat(elideProperties.getMvc().isPost()).isFalse();
     assertThat(elideProperties.getMvc().isPatch()).isFalse();

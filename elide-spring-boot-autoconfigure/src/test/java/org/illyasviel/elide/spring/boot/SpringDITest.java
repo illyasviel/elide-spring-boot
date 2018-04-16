@@ -51,14 +51,14 @@ public class SpringDITest {
 
     String postBook = "{\"data\": {\"type\": \"account\",\"attributes\": {\"username\": \"username\",\"password\": \"password\"}}}";
 
-    mockMvc.perform(post("/account")
+    mockMvc.perform(post("/api/account")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(postBook)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(get("/account")
+    mockMvc.perform(get("/api/account")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())

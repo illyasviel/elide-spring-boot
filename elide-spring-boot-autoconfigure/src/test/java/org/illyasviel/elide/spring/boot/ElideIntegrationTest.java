@@ -72,7 +72,7 @@ public class ElideIntegrationTest {
     for (int i = 0; i < 5; i++) {
       String postAuthor = "{ \"data\": { \"type\": \"author\", \"attributes\": { \"firstName\": \"firstName\", \"lastName\": \"lastName\", \"age\": \"" + (i + 18) + "\" } } }";
 
-      mockMvc.perform(post("/author")
+      mockMvc.perform(post("/api/author")
           .contentType(JSON_API_CONTENT_TYPE)
           .content(postAuthor)
           .accept(JSON_API_CONTENT_TYPE))
@@ -83,7 +83,7 @@ public class ElideIntegrationTest {
       for (int j = 0; j < 10; j++) {
         String postBook = "{\"data\": {\"type\": \"book\",\"attributes\": {\"name\": \"bookName\",\"price\": \"" + (100 * i + j) + "\"},\"relationships\": {\"author\": {\"data\": {\"type\": \"author\",\"id\": \"" + (i + 1) + "\"}}}}}";
 
-        mockMvc.perform(post("/book")
+        mockMvc.perform(post("/api/book")
             .contentType(JSON_API_CONTENT_TYPE)
             .content(postBook)
             .accept(JSON_API_CONTENT_TYPE))
@@ -101,7 +101,7 @@ public class ElideIntegrationTest {
 
   @Test
   public void testRootEntityFormulaFetch() throws Exception {
-    mockMvc.perform(get("/book?fields[book]=name,price&page[limit]=3&page[totals]")
+    mockMvc.perform(get("/api/book?fields[book]=name,price&page[limit]=3&page[totals]")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -115,7 +115,7 @@ public class ElideIntegrationTest {
 
   @Test
   public void testSubCollectionEntityFormulaFetch() throws Exception {
-    mockMvc.perform(get("/book/1/author")
+    mockMvc.perform(get("/api/book/1/author")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -127,7 +127,7 @@ public class ElideIntegrationTest {
 
   @Test
   public void testRootEntityFormulaWithFilter() throws Exception {
-    mockMvc.perform(get("/book?filter[book]=price>=400")
+    mockMvc.perform(get("/api/book?filter[book]=price>=400")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -137,7 +137,7 @@ public class ElideIntegrationTest {
 
   @Test
   public void testSubCollectionEntityFormulaWithFilter() throws Exception {
-    mockMvc.perform(get("/author/1/books?filter[book]=price>=8&page[limit]=1&page[totals]")
+    mockMvc.perform(get("/api/author/1/books?filter[book]=price>=8&page[limit]=1&page[totals]")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -151,7 +151,7 @@ public class ElideIntegrationTest {
 
   @Test
   public void testRootEntityFormulaWithSorting() throws Exception {
-    mockMvc.perform(get("/book?sort=-price&page[limit]=3")
+    mockMvc.perform(get("/api/book?sort=-price&page[limit]=3")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -162,7 +162,7 @@ public class ElideIntegrationTest {
 
   @Test
   public void testSubCollectionEntityFormulaWithSorting() throws Exception {
-    mockMvc.perform(get("/author/1/books?sort=-price")
+    mockMvc.perform(get("/api/author/1/books?sort=-price")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -175,13 +175,13 @@ public class ElideIntegrationTest {
   @Test
   public void testRootEntityUpdateAttributes() throws Exception {
     String patchBook = "{ \"data\": { \"type\": \"book\", \"id\": \"1\", \"attributes\": { \"name\": \"root name\" } } }";
-    mockMvc.perform(patch("/book/1")
+    mockMvc.perform(patch("/api/book/1")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(patchBook)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/book/1")
+    mockMvc.perform(get("/api/book/1")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -192,13 +192,13 @@ public class ElideIntegrationTest {
   @Test
   public void testSubEntityUpdateAttributes() throws Exception {
     String patchBook = "{ \"data\": { \"type\": \"book\", \"id\": \"1\", \"attributes\": { \"name\": \"sub name\" } } }";
-    mockMvc.perform(patch("/author/1/books/1")
+    mockMvc.perform(patch("/api/author/1/books/1")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(patchBook)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/book/1")
+    mockMvc.perform(get("/api/book/1")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -209,13 +209,13 @@ public class ElideIntegrationTest {
   @Test
   public void testSubEntityUpdateRelationship() throws Exception {
     String patchBook = "{ \"data\": { \"type\": \"author\", \"id\": 2 } }";
-    mockMvc.perform(patch("/author/1/books/1/relationships/author")
+    mockMvc.perform(patch("/api/author/1/books/1/relationships/author")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(patchBook)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/book/1")
+    mockMvc.perform(get("/api/book/1")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -225,11 +225,11 @@ public class ElideIntegrationTest {
   @Transactional
   @Test
   public void testRootEntityDeleteEntity() throws Exception {
-    mockMvc.perform(delete("/book/1")
+    mockMvc.perform(delete("/api/book/1")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/book/1")
+    mockMvc.perform(get("/api/book/1")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isNotFound());
@@ -238,11 +238,11 @@ public class ElideIntegrationTest {
   @Transactional
   @Test
   public void testSubEntityDeleteEntity() throws Exception {
-    mockMvc.perform(delete("/author/1/books/2")
+    mockMvc.perform(delete("/api/author/1/books/2")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/book/2")
+    mockMvc.perform(get("/api/book/2")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isNotFound());
@@ -252,13 +252,13 @@ public class ElideIntegrationTest {
   @Test
   public void testSubEntityDeleteRelationship() throws Exception {
     String deleteBookRelation = "{ \"data\": { \"type\": \"author\", \"id\": \"1\" } }";
-    mockMvc.perform(delete("/author/1/books/1/relationships/author")
+    mockMvc.perform(delete("/api/author/1/books/1/relationships/author")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(deleteBookRelation)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/book/1")
+    mockMvc.perform(get("/api/book/1")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())
@@ -267,7 +267,7 @@ public class ElideIntegrationTest {
 
   @Test
   public void testInvalidIdentifier() throws Exception {
-    mockMvc.perform(delete("/author/1/books/99999")
+    mockMvc.perform(delete("/api/author/1/books/99999")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.errors[0]").isString());
@@ -278,18 +278,25 @@ public class ElideIntegrationTest {
   public void testPersistenceException() throws Exception {
     String postBook = "{\"data\": {\"type\": \"book\",\"attributes\": {\"name\": \"bookName\",\"price\": \"100\",\"uniqueNumber\": \"1\"},\"relationships\": {\"author\": {\"data\": {\"type\": \"author\",\"id\": \"1\"}}}}}";
 
-    mockMvc.perform(post("/book")
+    mockMvc.perform(post("/api/book")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(postBook)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(post("/book")
+    mockMvc.perform(post("/api/book")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(postBook)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isUnprocessableEntity());
+  }
+
+  @Test
+  public void testWrongPrefix() throws Exception {
+    mockMvc.perform(get("/book")
+        .accept(JSON_API_CONTENT_TYPE))
+        .andExpect(status().isNotFound());
   }
 }

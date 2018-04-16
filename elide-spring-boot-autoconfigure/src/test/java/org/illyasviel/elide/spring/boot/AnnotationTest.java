@@ -58,7 +58,7 @@ public class AnnotationTest {
     this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
   }
 
-    @Test
+  @Test
   public void testCheckAnnotation() {
     Map<String, Class<? extends Check>> checkMap = elide.getElideSettings()
         .getDictionary().getCheckMappings();
@@ -72,14 +72,14 @@ public class AnnotationTest {
   @Test
   public void testReadPermissionRejectAllCheck() throws Exception {
     String postString = "{ \"data\": { \"type\": \"rejectEntity\", \"attributes\": { \"name\": \"name\" } } }";
-    mockMvc.perform(post("/rejectEntity")
+    mockMvc.perform(post("/api/rejectEntity")
         .contentType(JSON_API_CONTENT_TYPE)
         .content(postString)
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(get("/rejectEntity")
+    mockMvc.perform(get("/api/rejectEntity")
         .accept(JSON_API_CONTENT_TYPE))
         .andExpect(content().contentType(JSON_API_RESPONSE))
         .andExpect(status().isOk())

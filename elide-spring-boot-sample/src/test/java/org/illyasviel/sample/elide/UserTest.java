@@ -55,13 +55,13 @@ public class UserTest {
   @Test
   public void test() throws Exception {
     // test create
-    mockMvc.perform(post("/user")
+    mockMvc.perform(post("/api/user")
         .content("{ \"data\": { \"type\": \"user\", \"attributes\": { \"password\": \"test\", \"username\": \"test\" }}}")
         .contentType(JSON_API_CONTENT_TYPE))
         .andExpect(status().isCreated());
 
     // test select
-    mockMvc.perform(get("/user"))
+    mockMvc.perform(get("/api/user"))
         .andExpect(content().string("{\"data\":[{\"type\":\"user\",\"id\":\"1\",\"attributes\":{\"password\":\"test\",\"username\":\"test\"}}]}"))
         .andExpect(status().isOk());
     }
