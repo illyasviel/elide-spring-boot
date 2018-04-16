@@ -27,6 +27,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ElideProperties {
 
   private String prefix = "/api";
+  private int pageSize = 20;
+  private int maxPageSize = 100;
   private MVCProperties mvc;
 
   @Data

@@ -19,7 +19,6 @@ package org.illyasviel.elide.spring.boot.autoconfigure;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yahoo.elide.Elide;
 import com.yahoo.elide.ElideSettingsBuilder;
-import com.yahoo.elide.audit.Slf4jLogger;
 import com.yahoo.elide.core.DataStore;
 import com.yahoo.elide.core.EntityDictionary;
 import com.yahoo.elide.core.filter.dialect.RSQLFilterDialect;
@@ -39,6 +38,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -47,6 +47,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @author olOwOlo
  */
 @Configuration
+@EnableConfigurationProperties(ElideProperties.class)
 @ConditionalOnWebApplication
 @AutoConfigureAfter({HibernateJpaAutoConfiguration.class, WebMvcAutoConfiguration.class})
 public class ElideAutoConfiguration {
@@ -58,7 +59,8 @@ public class ElideAutoConfiguration {
   public Elide elide(PlatformTransactionManager txManager,
       AutowireCapableBeanFactory beanFactory,
       EntityManager entityManager,
-      ObjectMapper objectMapper) {
+      ObjectMapper objectMapper,
+      ElideProperties elideProperties) {
     ConcurrentHashMap<String, Class<? extends Check>> checks = new ConcurrentHashMap<>();
 
     // scan checks
@@ -79,10 +81,11 @@ public class ElideAutoConfiguration {
 
     return new Elide(new ElideSettingsBuilder(springDataStore)
         .withJsonApiMapper(new JsonApiMapper(entityDictionary, objectMapper))
-        .withAuditLogger(new Slf4jLogger())
         .withEntityDictionary(entityDictionary)
         .withJoinFilterDialect(rsqlFilterDialect)
         .withSubqueryFilterDialect(rsqlFilterDialect)
+        .withDefaultPageSize(elideProperties.getPageSize())
+        .withDefaultMaxPageSize(elideProperties.getMaxPageSize())
         .build());
   }
 }
