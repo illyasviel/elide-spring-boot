@@ -18,9 +18,10 @@ package org.illyasviel.sample.elide;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.illyasviel.sample.elide.util.PasswordEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,8 @@ public class UserTest {
 
   @Autowired
   private WebApplicationContext wac;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @Before
   public void setup() {
@@ -62,7 +65,10 @@ public class UserTest {
 
     // test select
     mockMvc.perform(get("/api/user"))
-        .andExpect(content().string("{\"data\":[{\"type\":\"user\",\"id\":\"1\",\"attributes\":{\"password\":\"test\",\"username\":\"test\"}}]}"))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.length()").value(1))
+        .andExpect(jsonPath("$.data[0].attributes.username").value("test"))
+        .andExpect(jsonPath("$.data[0].attributes.password").doesNotExist())
+        .andExpect(jsonPath("$.data[0].attributes.encodedPassword").value(passwordEncoder.encode("test")));
     }
 }

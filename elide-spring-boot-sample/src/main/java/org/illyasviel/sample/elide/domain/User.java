@@ -16,13 +16,20 @@
 
 package org.illyasviel.sample.elide.domain;
 
+import static org.illyasviel.sample.elide.check.UserCheck.REJECT_ALL;
+
 import com.yahoo.elide.annotation.Include;
+import com.yahoo.elide.annotation.OnCreatePreCommit;
+import com.yahoo.elide.annotation.ReadPermission;
+import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.illyasviel.sample.elide.util.PasswordEncoder;
 
 /**
  * @author olOwOlo
@@ -37,6 +44,7 @@ public class User {
   private Integer id;
   private String username;
   private String password;
+  private String encodedPassword;
 
   @Id
   @GeneratedValue
@@ -48,7 +56,24 @@ public class User {
     return username;
   }
 
+  @NotNull
+  @ReadPermission(expression = REJECT_ALL)
   public String getPassword() {
     return password;
+  }
+
+  public String getEncodedPassword() {
+    return encodedPassword;
+  }
+
+  /*
+   * All annotations supported by spring are ok. e.g. `@Autowired`
+   */
+  @Inject
+  private PasswordEncoder passwordEncoder;
+
+  @OnCreatePreCommit
+  public void onCreatePreCommit() {
+    setEncodedPassword(passwordEncoder.encode(getPassword()));
   }
 }
