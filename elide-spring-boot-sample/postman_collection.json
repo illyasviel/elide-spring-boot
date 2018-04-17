@@ -1,0 +1,130 @@
+{
+	"variables": [],
+	"info": {
+		"name": "elide-spring-boot-sample",
+		"_postman_id": "98fa6a16-5260-cc39-5650-fda8f707a90b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/user",
+			"request": {
+				"url": "http://localhost:8080/api/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.api+json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.api+json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"data\": {\r\n    \"type\": \"user\",\r\n    \"attributes\": {\r\n      \"username\": \"test\",\r\n      \"password\": \"test\"\r\n    }\r\n  }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/user",
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/api/user?page[number]=1&page[size]=3&page[totals]",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user"
+					],
+					"query": [
+						{
+							"key": "page[number]",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "page[size]",
+							"value": "3",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "page[totals]",
+							"value": "",
+							"equals": false,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.api+json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/user/2",
+			"request": {
+				"url": "http://localhost:8080/api/user/2",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.api+json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.api+json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"data\": {\r\n\t\"id\": \"2\",\r\n    \"type\": \"user\",\r\n    \"attributes\": {\r\n      \"username\": \"test\",\r\n      \"encodedPassword\": \"test\"\r\n    }\r\n  }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/user/2",
+			"request": {
+				"url": "http://localhost:8080/api/user/2",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.api+json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
