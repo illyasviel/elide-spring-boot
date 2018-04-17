@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Just an example, the spring's
- * <code>PasswordEncoderFactories.createDelegatingPasswordEncoder()<code/>
+ * <code>PasswordEncoderFactories.createDelegatingPasswordEncoder()</code>
  * is a better choice.
  *
  * @author olOwOlo

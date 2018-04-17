@@ -19,7 +19,7 @@ package org.illyasviel.sample.elide.domain;
 import static org.illyasviel.sample.elide.check.UserCheck.REJECT_ALL;
 
 import com.yahoo.elide.annotation.Include;
-import com.yahoo.elide.annotation.OnCreatePreCommit;
+import com.yahoo.elide.annotation.OnCreatePreSecurity;
 import com.yahoo.elide.annotation.ReadPermission;
 import javax.inject.Inject;
 import javax.persistence.Entity;
@@ -72,8 +72,8 @@ public class User {
   @Inject
   private PasswordEncoder passwordEncoder;
 
-  @OnCreatePreCommit
-  public void onCreatePreCommit() {
+  @OnCreatePreSecurity
+  public void onCreatePreSecurity() {
     setEncodedPassword(passwordEncoder.encode(getPassword()));
   }
 }
