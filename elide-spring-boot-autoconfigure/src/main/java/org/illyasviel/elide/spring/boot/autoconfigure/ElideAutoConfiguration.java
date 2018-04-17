@@ -84,7 +84,7 @@ public class ElideAutoConfiguration {
         .withEntityDictionary(entityDictionary)
         .withJoinFilterDialect(rsqlFilterDialect)
         .withSubqueryFilterDialect(rsqlFilterDialect)
-        .withDefaultPageSize(elideProperties.getPageSize())
+        .withDefaultPageSize(elideProperties.getDefaultPageSize())
         .withDefaultMaxPageSize(elideProperties.getMaxPageSize())
         .build());
   }
