@@ -17,6 +17,7 @@
 package org.illyasviel.sample.elide;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -63,12 +64,21 @@ public class UserTest {
         .contentType(JSON_API_CONTENT_TYPE))
         .andExpect(status().isCreated());
 
-    // test select
     mockMvc.perform(get("/api/user"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()").value(1))
         .andExpect(jsonPath("$.data[0].attributes.username").value("test"))
         .andExpect(jsonPath("$.data[0].attributes.password").doesNotExist())
         .andExpect(jsonPath("$.data[0].attributes.encodedPassword").value(passwordEncoder.encode("test")));
-    }
+
+    // test update
+    mockMvc.perform(patch("/api/user/1")
+        .content("{ \"data\": { \"type\": \"user\", \"id\": \"1\", \"attributes\": { \"password\": \"new\" }}}")
+        .contentType(JSON_API_CONTENT_TYPE))
+        .andExpect(status().isNoContent());
+
+    mockMvc.perform(get("/api/user/1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.attributes.encodedPassword").value(passwordEncoder.encode("new")));
+  }
 }
