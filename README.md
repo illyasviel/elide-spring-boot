@@ -10,7 +10,8 @@ Elide Spring-Boot-Starter will help you use [Elide](https://github.com/yahoo/eli
 - Integrated Spring Transaction.
 - Integrated Spring Dependency Injection.
 - A convenience annotation, `@ElideCheck("expression")`, help you register elide check.
-- Catch `ConstraintViolationException` return HTTP [422](https://tools.ietf.org/html/rfc4918#section-11.2).
+- A convenience annotation, `@ElideHook(lifeCycle = OnXXX.class)`, help you register elide function hook.
+- Catch `org.hibernate.exception.ConstraintViolationException` return HTTP [422](https://tools.ietf.org/html/rfc4918#section-11.2).
 
 ## Usage
  

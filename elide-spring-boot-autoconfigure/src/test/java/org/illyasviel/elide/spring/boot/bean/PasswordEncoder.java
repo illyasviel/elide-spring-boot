@@ -16,6 +16,8 @@
 
 package org.illyasviel.elide.spring.boot.bean;
 
+import com.google.common.hash.Hashing;
+import java.nio.charset.Charset;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,5 +28,9 @@ public class PasswordEncoder {
 
   public String encode(String password) {
     return "encoded password";
+  }
+
+  public String sha512(String password) {
+    return Hashing.sha512().hashString(password, Charset.forName("utf-8")).toString();
   }
 }

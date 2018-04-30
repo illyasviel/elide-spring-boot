@@ -22,13 +22,17 @@ import com.yahoo.elide.ElideSettingsBuilder;
 import com.yahoo.elide.core.DataStore;
 import com.yahoo.elide.core.EntityDictionary;
 import com.yahoo.elide.core.filter.dialect.RSQLFilterDialect;
+import com.yahoo.elide.functions.LifeCycleHook;
 import com.yahoo.elide.jsonapi.JsonApiMapper;
 import com.yahoo.elide.security.checks.Check;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.EntityManager;
 import org.atteo.classindex.ClassIndex;
 import org.hibernate.ScrollMode;
 import org.illyasviel.elide.spring.boot.annotation.ElideCheck;
+import org.illyasviel.elide.spring.boot.annotation.ElideHook;
 import org.illyasviel.elide.spring.boot.datastore.SpringHibernateDataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -58,6 +63,7 @@ public class ElideAutoConfiguration {
   @ConditionalOnMissingBean
   public Elide elide(PlatformTransactionManager txManager,
       AutowireCapableBeanFactory beanFactory,
+      ApplicationContext context,
       EntityManager entityManager,
       ObjectMapper objectMapper,
       ElideProperties elideProperties) {
@@ -79,7 +85,7 @@ public class ElideAutoConfiguration {
     DataStore springDataStore = new SpringHibernateDataStore(txManager, beanFactory, entityManager,
         true, ScrollMode.FORWARD_ONLY);
 
-    return new Elide(new ElideSettingsBuilder(springDataStore)
+    Elide elide = new Elide(new ElideSettingsBuilder(springDataStore)
         .withJsonApiMapper(new JsonApiMapper(entityDictionary, objectMapper))
         .withEntityDictionary(entityDictionary)
         .withJoinFilterDialect(rsqlFilterDialect)
@@ -87,5 +93,43 @@ public class ElideAutoConfiguration {
         .withDefaultPageSize(elideProperties.getDefaultPageSize())
         .withDefaultMaxPageSize(elideProperties.getMaxPageSize())
         .build());
+
+    // scan life cycle hooks
+    for (Class<?> clazz : ClassIndex.getAnnotated(ElideHook.class)) {
+      if (LifeCycleHook.class.isAssignableFrom(clazz)) {
+        ElideHook elideHook = clazz.getAnnotation(ElideHook.class);
+        // get generic entity type
+        Class<?> entity = null;
+        for (Type genericInterface : clazz.getGenericInterfaces()) {
+          if (genericInterface instanceof ParameterizedType
+              && ((ParameterizedType) genericInterface).getRawType().equals(LifeCycleHook.class)) {
+            Type[] genericTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
+            entity = (Class<?>) genericTypes[0];
+          }
+        }
+        if (entity == null) {
+          throw new RuntimeException("entity is null, this should not be thrown");
+        }
+
+        if (elideHook.fieldOrMethodName().equals("")) {
+          entityDictionary.bindTrigger(entity, elideHook.lifeCycle(),
+              (LifeCycleHook) context.getBean(clazz));
+        } else {
+          entityDictionary.bindTrigger(entity, elideHook.lifeCycle(),
+              elideHook.fieldOrMethodName(), (LifeCycleHook) context.getBean(clazz));
+        }
+
+        logger.debug("Register Elide Function Hook: bindTrigger({}, {}, \"{}\", {})",
+            entity.getCanonicalName(),
+            elideHook.lifeCycle().getSimpleName(),
+            elideHook.fieldOrMethodName(),
+            clazz.getCanonicalName());
+
+      } else {
+        throw new RuntimeException("ElideHook class must implements LifeCycleHook<T>");
+      }
+    }
+
+    return elide;
   }
 }
