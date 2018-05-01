@@ -33,10 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class AccountHook {
 
-  @ElideHook(lifeCycle = OnUpdatePreCommit.class)
-  public static class AccountOnUpdatePreCommit implements LifeCycleHook<Account> {
+  @ElideHook(lifeCycle = OnUpdatePreCommit.class, fieldOrMethodName = "username")
+  public static class UsernameOnUpdatePreCommit implements LifeCycleHook<Account> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountOnUpdatePreCommit.class);
+    private static final Logger logger = LoggerFactory.getLogger(UsernameOnUpdatePreCommit.class);
 
     @Autowired
     private UsernameEncoder usernameEncoder;
@@ -44,7 +44,7 @@ public class AccountHook {
     @Override
     public void execute(Account account, RequestScope requestScope,
         Optional<ChangeSpec> changes) {
-      logger.debug("AccountHook.OnUpdatePreCommit: function hook execute");
+      logger.debug("AccountHook.OnUpdatePreCommit(username): function hook execute");
       account.setUsername(usernameEncoder.encode(account.getUsername()));
     }
   }
