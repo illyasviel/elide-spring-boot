@@ -83,7 +83,7 @@ public class ElideAutoConfiguration {
     RSQLFilterDialect rsqlFilterDialect = new RSQLFilterDialect(entityDictionary);
 
     DataStore springDataStore = new SpringHibernateDataStore(txManager, beanFactory, entityManager,
-        true, ScrollMode.FORWARD_ONLY);
+        elideProperties, true, ScrollMode.FORWARD_ONLY);
 
     Elide elide = new Elide(new ElideSettingsBuilder(springDataStore)
         .withJsonApiMapper(new JsonApiMapper(entityDictionary, objectMapper))

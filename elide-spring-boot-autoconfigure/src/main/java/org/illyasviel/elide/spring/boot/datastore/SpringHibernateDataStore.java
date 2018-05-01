@@ -26,6 +26,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
 import org.hibernate.ScrollMode;
 import org.hibernate.Session;
+import org.illyasviel.elide.spring.boot.autoconfigure.ElideProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -37,9 +40,12 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  */
 public class SpringHibernateDataStore implements DataStore {
 
+  private static final Logger logger = LoggerFactory.getLogger(SpringHibernateDataStore.class);
+
   protected final PlatformTransactionManager txManager;
   protected final AutowireCapableBeanFactory beanFactory;
   protected final EntityManager entityManager;
+  protected final ElideProperties elideProperties;
   protected final boolean isScrollEnabled;
   protected final ScrollMode scrollMode;
   protected final HibernateTransactionSupplier transactionSupplier;
@@ -56,9 +62,11 @@ public class SpringHibernateDataStore implements DataStore {
   public SpringHibernateDataStore(PlatformTransactionManager txManager,
       AutowireCapableBeanFactory beanFactory,
       EntityManager entityManager,
+      ElideProperties elideProperties,
       boolean isScrollEnabled,
       ScrollMode scrollMode) {
-    this(txManager, beanFactory, entityManager, isScrollEnabled, scrollMode, SpringHibernateTransaction::new);
+    this(txManager, beanFactory, entityManager, elideProperties,
+        isScrollEnabled, scrollMode, SpringHibernateTransaction::new);
   }
 
   /**
@@ -77,12 +85,14 @@ public class SpringHibernateDataStore implements DataStore {
   protected SpringHibernateDataStore(PlatformTransactionManager txManager,
       AutowireCapableBeanFactory beanFactory,
       EntityManager entityManager,
+      ElideProperties elideProperties,
       boolean isScrollEnabled,
       ScrollMode scrollMode,
       HibernateTransactionSupplier transactionSupplier) {
     this.txManager = txManager;
     this.beanFactory = beanFactory;
     this.entityManager = entityManager;
+    this.elideProperties = elideProperties;
     this.isScrollEnabled = isScrollEnabled;
     this.scrollMode = scrollMode;
     this.transactionSupplier = transactionSupplier;
@@ -90,6 +100,11 @@ public class SpringHibernateDataStore implements DataStore {
 
   @Override
   public void populateEntityDictionary(EntityDictionary dictionary) {
+    if (elideProperties.isSpringDependencyInjection()) {
+      logger.info("Spring Dependency Injection is enabled, "
+          + "each time an object of entityClass type is instantiated by Elide, "
+          + "Spring will try to inject beans.");
+    }
     Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();
     /* bind all entities */
     entities.stream()
@@ -102,8 +117,10 @@ public class SpringHibernateDataStore implements DataStore {
             dictionary.lookupEntityClass(mappedClass);
             // Bind if successful
             dictionary.bindEntity(mappedClass);
-            // Bind Spring Dependency Injection
-            dictionary.bindInitializer(beanFactory::autowireBean, mappedClass);
+            if (elideProperties.isSpringDependencyInjection()) {
+              // Bind Spring Dependency Injection
+              dictionary.bindInitializer(beanFactory::autowireBean, mappedClass);
+            }
           } catch (IllegalArgumentException e) {
             // Ignore this entity
             // Turns out that hibernate may include non-entity types in this list when using things

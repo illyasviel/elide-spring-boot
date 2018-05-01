@@ -57,6 +57,7 @@ public class ElidePropertiesTest {
     assertThat(elideProperties.getPrefix()).isEqualTo("/api");
     assertThat(elideProperties.getDefaultPageSize()).isEqualTo(20);
     assertThat(elideProperties.getMaxPageSize()).isEqualTo(100);
+    assertThat(elideProperties.isSpringDependencyInjection()).isTrue();
     assertThat(elideProperties.getMvc().isGet()).isTrue();
     assertThat(elideProperties.getMvc().isPost()).isFalse();
     assertThat(elideProperties.getMvc().isPatch()).isFalse();

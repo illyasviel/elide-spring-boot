@@ -29,6 +29,10 @@ public class ElideProperties {
   private String prefix = "/api";
   private int defaultPageSize = 20;
   private int maxPageSize = 100;
+  /**
+   * Allow inject bean in entity model class.
+   */
+  private boolean springDependencyInjection = true;
   private MVCProperties mvc;
 
   @Data

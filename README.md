@@ -8,7 +8,7 @@ Elide Spring-Boot-Starter will help you use [Elide](https://github.com/yahoo/eli
 
 - Automatically configure elide and JsonAPI controller.
 - Integrated Spring Transaction.
-- Integrated Spring Dependency Injection.
+- Integrated Spring Dependency Injection (optional).
 - A convenience annotation, `@ElideCheck("expression")`, help you register elide check.
 - A convenience annotation, `@ElideHook(lifeCycle = OnXXX.class)`, help you register elide function hook.
 - Catch `org.hibernate.exception.ConstraintViolationException` return HTTP [422](https://tools.ietf.org/html/rfc4918#section-11.2).
@@ -36,6 +36,7 @@ elide:
   prefix: "/api"
   default-page-size: 20
   max-page-size: 100
+  spring-dependency-injection: true
   mvc:
     enable: true
     get: true
