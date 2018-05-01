@@ -20,13 +20,13 @@ import com.yahoo.elide.core.exceptions.HttpStatusException;
 import org.springframework.http.HttpStatus;
 
 /**
- * 422, "Unprocessable Entity"
+ * 422, "Unprocessable Entity".
  *
  * @author olOwOlo
  */
 public class UnprocessableEntityException extends HttpStatusException {
 
-  private static final long serialVersionUID = 8596909575162046982L;
+  private static final long serialVersionUID = 1L;
 
   public UnprocessableEntityException(String message) {
     super(HttpStatus.UNPROCESSABLE_ENTITY.value(), message);

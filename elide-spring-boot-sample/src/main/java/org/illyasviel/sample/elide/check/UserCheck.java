@@ -20,6 +20,7 @@ import com.yahoo.elide.security.User;
 import org.illyasviel.elide.spring.boot.annotation.ElideCheck;
 
 /**
+ * User checks.
  * @author olOwOlo
  */
 public class UserCheck {
@@ -27,7 +28,7 @@ public class UserCheck {
   public static final String REJECT_ALL = "reject all";
 
   @ElideCheck(REJECT_ALL)
-  public static class rejectAll extends com.yahoo.elide.security.checks.UserCheck {
+  public static class RejectAll extends com.yahoo.elide.security.checks.UserCheck {
 
     @Override
     public boolean ok(User user) {

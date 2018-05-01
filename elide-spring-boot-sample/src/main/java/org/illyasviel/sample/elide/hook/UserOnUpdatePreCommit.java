@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * User OnUpdatePreCommit LifeCycleHook.
  * @author olOwOlo
  */
 @ElideHook(lifeCycle = OnUpdatePreCommit.class, fieldOrMethodName = "password")

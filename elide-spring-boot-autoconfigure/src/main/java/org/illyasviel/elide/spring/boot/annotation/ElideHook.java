@@ -63,6 +63,7 @@ public @interface ElideHook {
   Class<? extends Annotation> lifeCycle();
 
   /**
+   * If set, then the annotated method only executes when the field corresponding to the name.
    * @return The name of the field or method
    */
   String fieldOrMethodName() default "";

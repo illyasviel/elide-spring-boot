@@ -16,10 +16,6 @@
 
 package org.illyasviel.elide.spring.boot.annotation;
 
-import com.yahoo.elide.annotation.CreatePermission;
-import com.yahoo.elide.annotation.DeletePermission;
-import com.yahoo.elide.annotation.ReadPermission;
-import com.yahoo.elide.annotation.UpdatePermission;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,14 +24,15 @@ import java.lang.annotation.Target;
 import org.atteo.classindex.IndexAnnotated;
 
 /**
- * A convenience annotation that help you register elide check
+ * A convenience annotation that help you register elide check.
  * <br><br>
  * Example: <br>
  * <pre>
  * <code>@ElideCheck("i am an expression")</code>
  * public static class{@literal Inline<Post>} extends{@literal OperationCheck<Post>} {
  *   <code>@Override</code>
- *   public boolean ok(Post object, RequestScope requestScope,{@literal Optional<ChangeSpec>} changeSpec) {
+ *   public boolean ok(Post object, RequestScope requestScope,
+ *       {@literal Optional<ChangeSpec>} changeSpec) {
  *     return false;
  *   }
  * }
@@ -51,10 +48,10 @@ public @interface ElideCheck {
 
   /**
    * The expression which will be used for
-   * {@link ReadPermission#expression()},
-   * {@link UpdatePermission#expression()},
-   * {@link CreatePermission#expression()},
-   * {@link DeletePermission#expression()}
+   * {@link com.yahoo.elide.annotation.ReadPermission#expression()},
+   * {@link com.yahoo.elide.annotation.UpdatePermission#expression()},
+   * {@link com.yahoo.elide.annotation.CreatePermission#expression()},
+   * {@link com.yahoo.elide.annotation.DeletePermission#expression()}.
    * @return The expression you want to defined.
    */
   String value();

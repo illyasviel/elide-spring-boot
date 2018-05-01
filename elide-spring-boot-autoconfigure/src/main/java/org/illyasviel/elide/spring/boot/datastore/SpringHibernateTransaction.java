@@ -29,6 +29,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 
 /**
+ * Spring Hibernate Transaction.
  * @author olOwOlo
  */
 public class SpringHibernateTransaction extends HibernateTransaction {
@@ -64,7 +65,8 @@ public class SpringHibernateTransaction extends HibernateTransaction {
     } catch (TransactionException e) {
       PersistenceException pe = (PersistenceException) e.getCause();
       if (pe.getCause() instanceof ConstraintViolationException) {
-        throw new UnprocessableEntityException("Some fields violate constraint(notnull, unique, ...)", e);
+        throw new UnprocessableEntityException(
+            "Some fields violate constraint(notnull, unique, ...)", e);
       } else {
         throw e;
       }

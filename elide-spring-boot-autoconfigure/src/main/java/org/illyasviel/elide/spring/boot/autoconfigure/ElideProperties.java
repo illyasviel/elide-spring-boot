@@ -20,6 +20,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * ElideProperties.
  * @author olOwOlo
  */
 @Data
@@ -33,10 +34,10 @@ public class ElideProperties {
    * Allow inject bean in entity model class.
    */
   private boolean springDependencyInjection = true;
-  private MVCProperties mvc;
+  private MvcProperties mvc;
 
   @Data
-  public static class MVCProperties {
+  public static class MvcProperties {
 
     private boolean enable = true;
     private boolean get = true;

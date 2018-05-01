@@ -36,6 +36,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
+ * Spring Hibernate DataStore.
  * @author olOwOlo
  */
 public class SpringHibernateDataStore implements DataStore {
@@ -70,8 +71,7 @@ public class SpringHibernateDataStore implements DataStore {
   }
 
   /**
-   * Constructor.
-   *
+   * <p>Constructor.</p>
    * Useful for extending the store and relying on existing code
    * to instantiate custom hibernate transaction.
    *
@@ -112,7 +112,8 @@ public class SpringHibernateDataStore implements DataStore {
         .filter(Objects::nonNull)
         .forEach(mappedClass -> {
           try {
-            // Ignore this result. We are just checking to see if it throws an exception meaning that
+            // Ignore this result.
+            // We are just checking to see if it throws an exception meaning that
             // provided class was _not_ an entity.
             dictionary.lookupEntityClass(mappedClass);
             // Bind if successful

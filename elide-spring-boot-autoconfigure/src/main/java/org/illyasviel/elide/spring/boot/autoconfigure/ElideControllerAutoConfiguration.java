@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
 /**
+ * Elide Controller AutoConfiguration.
  * TODO all request mapping produces should without any media type parameters
  *
  * @author olOwOlo
@@ -49,17 +50,20 @@ import org.springframework.web.servlet.HandlerMapping;
 @Configuration
 @EnableConfigurationProperties(ElideProperties.class)
 @AutoConfigureAfter(ElideAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "elide.mvc", value = "enable", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "elide.mvc", value = "enable",
+    havingValue = "true", matchIfMissing = true)
 public class ElideControllerAutoConfiguration {
 
-  private static final Logger logger = LoggerFactory.getLogger(ElideControllerAutoConfiguration.class);
+  private static final Logger logger = LoggerFactory
+      .getLogger(ElideControllerAutoConfiguration.class);
 
   static final String JSON_API_CONTENT_TYPE = "application/vnd.api+json";
 
   @Configuration
   @RestController
   @RequestMapping(produces = JSON_API_CONTENT_TYPE)
-  @ConditionalOnProperty(prefix = "elide.mvc", value = "get", havingValue = "true", matchIfMissing = true)
+  @ConditionalOnProperty(prefix = "elide.mvc", value = "get",
+      havingValue = "true", matchIfMissing = true)
   public static class ElideGetController {
 
     private final Elide elide;
@@ -71,11 +75,14 @@ public class ElideControllerAutoConfiguration {
       this.elideProperties = elideProperties;
     }
 
+    /**
+     * Elide [GET] controller.
+     */
     @GetMapping(value = "/**")
     public ResponseEntity<String> elideGet(@RequestParam Map<String, String> allRequestParams,
         HttpServletRequest request, Principal authentication) {
       ElideResponse response = elide
-          .get(getJsonAPIPath(request, elideProperties.getPrefix()),
+          .get(getJsonApiPath(request, elideProperties.getPrefix()),
               new MultivaluedHashMap<>(allRequestParams), authentication);
       return ResponseEntity.status(response.getResponseCode()).body(response.getBody());
     }
@@ -84,7 +91,8 @@ public class ElideControllerAutoConfiguration {
   @Configuration
   @RestController
   @RequestMapping(produces = JSON_API_CONTENT_TYPE)
-  @ConditionalOnProperty(prefix = "elide.mvc", value = "post", havingValue = "true", matchIfMissing = true)
+  @ConditionalOnProperty(prefix = "elide.mvc", value = "post",
+      havingValue = "true", matchIfMissing = true)
   public static class ElidePostController {
 
     private final Elide elide;
@@ -96,11 +104,14 @@ public class ElideControllerAutoConfiguration {
       this.elideProperties = elideProperties;
     }
 
+    /**
+     * Elide [POST] controller.
+     */
     @PostMapping(value = "/**", consumes = JSON_API_CONTENT_TYPE)
     public ResponseEntity<String> elidePost(@RequestBody String body,
         HttpServletRequest request, Principal authentication) {
       ElideResponse response = elide
-          .post(getJsonAPIPath(request, elideProperties.getPrefix()), body, authentication);
+          .post(getJsonApiPath(request, elideProperties.getPrefix()), body, authentication);
       return ResponseEntity.status(response.getResponseCode()).body(response.getBody());
     }
   }
@@ -108,7 +119,8 @@ public class ElideControllerAutoConfiguration {
   @Configuration
   @RestController
   @RequestMapping(produces = JSON_API_CONTENT_TYPE)
-  @ConditionalOnProperty(prefix = "elide.mvc", value = "patch", havingValue = "true", matchIfMissing = true)
+  @ConditionalOnProperty(prefix = "elide.mvc", value = "patch",
+      havingValue = "true", matchIfMissing = true)
   public static class ElidePatchController {
 
     private final Elide elide;
@@ -120,11 +132,14 @@ public class ElideControllerAutoConfiguration {
       this.elideProperties = elideProperties;
     }
 
+    /**
+     * Elide [PATCH] controller.
+     */
     @PatchMapping(value = "/**", consumes = JSON_API_CONTENT_TYPE)
     public ResponseEntity<String> elidePatch(@RequestBody String body,
         HttpServletRequest request, Principal authentication) {
       ElideResponse response = elide.patch(JSON_API_CONTENT_TYPE, JSON_API_CONTENT_TYPE,
-          getJsonAPIPath(request, elideProperties.getPrefix()), body, authentication);
+          getJsonApiPath(request, elideProperties.getPrefix()), body, authentication);
       return ResponseEntity.status(response.getResponseCode()).body(response.getBody());
     }
   }
@@ -133,7 +148,8 @@ public class ElideControllerAutoConfiguration {
   @Configuration
   @RestController
   @RequestMapping(produces = JSON_API_CONTENT_TYPE)
-  @ConditionalOnProperty(prefix = "elide.mvc", value = "delete", havingValue = "true", matchIfMissing = true)
+  @ConditionalOnProperty(prefix = "elide.mvc", value = "delete",
+      havingValue = "true", matchIfMissing = true)
   public static class ElideDeleteController {
 
     private final Elide elide;
@@ -145,25 +161,32 @@ public class ElideControllerAutoConfiguration {
       this.elideProperties = elideProperties;
     }
 
+    /**
+     * Elide [DELETE](relationships) controller.
+     */
     @DeleteMapping(value = "/**", consumes = JSON_API_CONTENT_TYPE)
     public ResponseEntity<String> elideDeleteRelationship(@RequestBody String body,
         HttpServletRequest request, Principal authentication) {
       ElideResponse response = elide
-          .delete(getJsonAPIPath(request, elideProperties.getPrefix()), body, authentication);
+          .delete(getJsonApiPath(request, elideProperties.getPrefix()), body, authentication);
       return ResponseEntity.status(response.getResponseCode()).body(response.getBody());
     }
 
+    /**
+     * Elide [DELETE](entity) controller.
+     */
     @DeleteMapping(value = "/**")
     public ResponseEntity<String> elideDelete(HttpServletRequest request,
         Principal authentication) {
       ElideResponse response = elide
-          .delete(getJsonAPIPath(request, elideProperties.getPrefix()), null, authentication);
+          .delete(getJsonApiPath(request, elideProperties.getPrefix()), null, authentication);
       return ResponseEntity.status(response.getResponseCode()).body(response.getBody());
     }
   }
 
-  private static String getJsonAPIPath(HttpServletRequest request, String prefix) {
-    String pathname = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+  private static String getJsonApiPath(HttpServletRequest request, String prefix) {
+    String pathname = (String) request
+        .getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
     if (pathname.startsWith(prefix + "/")) {
       logger.debug("[{}][{}] forward to elide.", request.getMethod(), pathname);
       return pathname.replaceFirst(prefix, "");

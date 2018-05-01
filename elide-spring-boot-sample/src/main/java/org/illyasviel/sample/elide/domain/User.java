@@ -32,6 +32,7 @@ import lombok.Setter;
 import org.illyasviel.sample.elide.util.PasswordEncoder;
 
 /**
+ * User Entity.
  * @author olOwOlo
  */
 @Setter

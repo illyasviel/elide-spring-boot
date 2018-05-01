@@ -49,6 +49,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
+ * Elide AutoConfiguration.
  * @author olOwOlo
  */
 @Configuration
@@ -59,6 +60,9 @@ public class ElideAutoConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(ElideAutoConfiguration.class);
 
+  /**
+   * Configure the Elide instance automatically.
+   */
   @Bean
   @ConditionalOnMissingBean
   public Elide elide(PlatformTransactionManager txManager,
