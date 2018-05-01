@@ -1,3 +1,14 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/illyasviel/elide-spring-boot/compare/v1.1.0...v1.2.0) (2018-05-01)
+
+
+### Features
+
+* **annotation:** add `ElideHook` help register function hooks ([7356725](https://github.com/illyasviel/elide-spring-boot/commit/7356725))
+* **property:** configure to disable spring dependency injection ([d4392bc](https://github.com/illyasviel/elide-spring-boot/commit/d4392bc))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/illyasviel/elide-spring-boot/compare/v1.0.0...v1.1.0) (2018-04-17)
 

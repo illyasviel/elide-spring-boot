@@ -19,7 +19,7 @@ Elide Spring-Boot-Starter will help you use [Elide](https://github.com/yahoo/eli
 <dependency>
   <groupId>org.illyasviel.elide</groupId>
   <artifactId>elide-spring-boot-starter</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
