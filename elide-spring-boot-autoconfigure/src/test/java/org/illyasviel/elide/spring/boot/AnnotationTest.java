@@ -75,7 +75,6 @@ public class AnnotationTest {
         .isEqualTo(org.illyasviel.elide.spring.boot.check.RejectAll.Inline.class);
     assertThat(checkMap.get(RejectAll.AT_COMMIT_REJECT))
         .isEqualTo(org.illyasviel.elide.spring.boot.check.RejectAll.AtCommit.class);
-    assertThat(checkMap.containsKey(RejectAll.WRONG_CLASS_TYPE)).isEqualTo(false);
   }
 
   @Test

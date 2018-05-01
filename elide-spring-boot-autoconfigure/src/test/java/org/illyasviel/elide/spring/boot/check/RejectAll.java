@@ -30,7 +30,6 @@ public class RejectAll {
 
   public static final String INLINE_REJECT = "inline reject";
   public static final String AT_COMMIT_REJECT = "at commit reject";
-  public static final String WRONG_CLASS_TYPE = "this should not be registered";
 
   @ElideCheck(INLINE_REJECT)
   public static class Inline<Post> extends OperationCheck<Post> {
@@ -46,10 +45,5 @@ public class RejectAll {
     public boolean ok(Post post, RequestScope requestScope, Optional<ChangeSpec> changeSpec) {
       return false;
     }
-  }
-
-  @ElideCheck(WRONG_CLASS_TYPE)
-  public static class other {
-
   }
 }

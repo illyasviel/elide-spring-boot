@@ -38,6 +38,9 @@ import org.atteo.classindex.IndexAnnotated;
  * }
  * </pre>
  *
+ * <b>NOTE: </b> The class you annotated must be a {@link com.yahoo.elide.security.checks.Check},
+ * otherwise a RuntimeException is thrown.
+ *
  * @author olOwOlo
  */
 @Retention(RetentionPolicy.RUNTIME)

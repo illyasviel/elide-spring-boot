@@ -74,14 +74,7 @@ public class ElideAutoConfiguration {
     ConcurrentHashMap<String, Class<? extends Check>> checks = new ConcurrentHashMap<>();
 
     // scan checks
-    for (Class<?> clazz : ClassIndex.getAnnotated(ElideCheck.class)) {
-      ElideCheck elideCheck = clazz.getAnnotation(ElideCheck.class);
-      if (Check.class.isAssignableFrom(clazz)) {
-        logger.debug("Register Elide Check [{}] with expression [{}]",
-            clazz.getCanonicalName(), elideCheck.value());
-        checks.put(elideCheck.value(), clazz.asSubclass(Check.class));
-      }
-    }
+    scanChecks(checks);
 
     EntityDictionary entityDictionary = new EntityDictionary(checks);
     RSQLFilterDialect rsqlFilterDialect = new RSQLFilterDialect(entityDictionary);
@@ -99,6 +92,32 @@ public class ElideAutoConfiguration {
         .build());
 
     // scan life cycle hooks
+    scanLifeCycleHook(entityDictionary, context);
+
+    return elide;
+  }
+
+  /**
+   * Side effect: populate checks.
+   */
+  private void scanChecks(ConcurrentHashMap<String, Class<? extends Check>> checks) {
+    for (Class<?> clazz : ClassIndex.getAnnotated(ElideCheck.class)) {
+      ElideCheck elideCheck = clazz.getAnnotation(ElideCheck.class);
+      if (Check.class.isAssignableFrom(clazz)) {
+        logger.debug("Register Elide Check [{}] with expression [{}]",
+            clazz.getCanonicalName(), elideCheck.value());
+        checks.put(elideCheck.value(), clazz.asSubclass(Check.class));
+      } else {
+        throw new RuntimeException("The class[" + clazz.getCanonicalName()
+            + "] being annotated with @ElideCheck must be a Check.");
+      }
+    }
+  }
+
+  /**
+   * Side effect: bind triggers on entityDictionary.
+   */
+  private void scanLifeCycleHook(EntityDictionary entityDictionary, ApplicationContext context) {
     for (Class<?> clazz : ClassIndex.getAnnotated(ElideHook.class)) {
       if (LifeCycleHook.class.isAssignableFrom(clazz)) {
         ElideHook elideHook = clazz.getAnnotation(ElideHook.class);
@@ -130,10 +149,9 @@ public class ElideAutoConfiguration {
             clazz.getCanonicalName());
 
       } else {
-        throw new RuntimeException("ElideHook class must implements LifeCycleHook<T>");
+        throw new RuntimeException("The class[" + clazz.getCanonicalName()
+            + "] being annotated with @ElideHook must implements LifeCycleHook<T>.");
       }
     }
-
-    return elide;
   }
 }
