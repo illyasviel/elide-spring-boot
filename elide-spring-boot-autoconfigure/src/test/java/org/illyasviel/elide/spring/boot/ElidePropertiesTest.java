@@ -17,6 +17,13 @@
 package org.illyasviel.elide.spring.boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.illyasviel.elide.spring.boot.ElideIntegrationTest.JSON_API_CONTENT_TYPE;
+import static org.illyasviel.elide.spring.boot.ElideIntegrationTest.JSON_API_RESPONSE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.illyasviel.elide.spring.boot.autoconfigure.ElideControllerAutoConfiguration;
 import org.illyasviel.elide.spring.boot.autoconfigure.ElideControllerAutoConfiguration.ElideDeleteController;
@@ -24,6 +31,7 @@ import org.illyasviel.elide.spring.boot.autoconfigure.ElideControllerAutoConfigu
 import org.illyasviel.elide.spring.boot.autoconfigure.ElideControllerAutoConfiguration.ElidePatchController;
 import org.illyasviel.elide.spring.boot.autoconfigure.ElideControllerAutoConfiguration.ElidePostController;
 import org.illyasviel.elide.spring.boot.autoconfigure.ElideProperties;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -33,7 +41,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.NestedServletException;
 
 /**
  * @author olOwOlo
@@ -43,7 +55,8 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TApplication.class)
 @TestPropertySource(properties = {"elide.mvc.enable=true", "elide.mvc.get=true",
-    "elide.mvc.post=false", "elide.mvc.patch=false", "elide.mvc.delete=false"})
+    "elide.mvc.post=true", "elide.mvc.patch=false", "elide.mvc.delete=false",
+    "elide.return-error-objects=true", "elide.spring-dependency-injection=false"})
 public class ElidePropertiesTest {
 
   @Autowired
@@ -51,41 +64,77 @@ public class ElidePropertiesTest {
   @Autowired
   private WebApplicationContext wac;
 
+  private MockMvc mockMvc;
+
+  @Before
+  public void before() {
+    this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+  }
+
   @Test
   public void testElideProperties() {
-    assertThat(elideProperties.getMvc().isEnable()).isTrue();
     assertThat(elideProperties.getPrefix()).isEqualTo("/api");
     assertThat(elideProperties.getDefaultPageSize()).isEqualTo(20);
     assertThat(elideProperties.getMaxPageSize()).isEqualTo(100);
-    assertThat(elideProperties.isSpringDependencyInjection()).isTrue();
+    assertThat(elideProperties.isReturnErrorObjects()).isTrue();
+    assertThat(elideProperties.isSpringDependencyInjection()).isFalse();
+    assertThat(elideProperties.getMvc().isEnable()).isTrue();
     assertThat(elideProperties.getMvc().isGet()).isTrue();
-    assertThat(elideProperties.getMvc().isPost()).isFalse();
+    assertThat(elideProperties.getMvc().isPost()).isTrue();
     assertThat(elideProperties.getMvc().isPatch()).isFalse();
     assertThat(elideProperties.getMvc().isDelete()).isFalse();
   }
 
   @Test
   public void testMVCBean() {
-    assertThat(wac.getBean(ElideControllerAutoConfiguration.class));
+    wac.getBean(ElideControllerAutoConfiguration.class);
   }
 
   @Test
   public void testGetBean() {
-    assertThat(wac.getBean(ElideGetController.class));
+    wac.getBean(ElideGetController.class);
   }
 
-  @Test(expected = NoSuchBeanDefinitionException.class)
+  @Test
   public void testPostBean() {
-    assertThat(wac.getBean(ElidePostController.class));
+    wac.getBean(ElidePostController.class);
   }
 
   @Test(expected = NoSuchBeanDefinitionException.class)
   public void testPatchBean() {
-    assertThat(wac.getBean(ElidePatchController.class));
+    wac.getBean(ElidePatchController.class);
   }
 
   @Test(expected = NoSuchBeanDefinitionException.class)
   public void testDeleteBean() {
-    assertThat(wac.getBean(ElideDeleteController.class));
+    wac.getBean(ElideDeleteController.class);
+  }
+
+  @Transactional
+  @Test(expected = NullPointerException.class)
+  public void testDisableDI() throws Throwable {
+    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+
+    try {
+      String postBook = "{\"data\": {\"type\": \"account\",\"attributes\": {\"username\": \"username\",\"password\": \"password\"}}}";
+
+      mockMvc.perform(post("/api/account")
+          .contentType(JSON_API_CONTENT_TYPE)
+          .content(postBook)
+          .accept(JSON_API_CONTENT_TYPE))
+          .andExpect(content().contentType(JSON_API_RESPONSE))
+          .andExpect(status().isCreated());
+    } catch (NestedServletException e) {
+      throw e.getCause();
+    }
+  }
+
+  @Test
+  public void testErrorObjects() throws Exception {
+    mockMvc.perform(get("/api/author/666")
+        .accept(JSON_API_CONTENT_TYPE))
+        .andExpect(content().contentType(JSON_API_RESPONSE))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.errors[0].detail").value("InvalidObjectIdentifierException: Unknown identifier '666' for author"));
   }
 }

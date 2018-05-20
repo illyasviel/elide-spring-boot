@@ -34,6 +34,10 @@ public class ElideProperties {
    * Allow inject bean in entity model class.
    */
   private boolean springDependencyInjection = true;
+  /**
+   * Return error object array instead of error string array.
+   */
+  private boolean returnErrorObjects = false;
   private MvcProperties mvc;
 
   @Data

@@ -89,6 +89,7 @@ public class ElideAutoConfiguration {
         .withSubqueryFilterDialect(rsqlFilterDialect)
         .withDefaultPageSize(elideProperties.getDefaultPageSize())
         .withDefaultMaxPageSize(elideProperties.getMaxPageSize())
+        .withReturnErrorObjects(elideProperties.isReturnErrorObjects())
         .build());
 
     // scan life cycle hooks
