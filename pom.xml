@@ -92,8 +92,8 @@
     <maven.compiler.testSource>1.8</maven.compiler.testSource>
     <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
 
-    <spring-boot.version>2.0.1.RELEASE</spring-boot.version>
-    <elide.version>4.2.2</elide.version>
+    <spring-boot.version>2.0.2.RELEASE</spring-boot.version>
+    <elide.version>4.2.3</elide.version>
     <classindex.version>3.4</classindex.version>
     <jaxb-api.version>2.3.0</jaxb-api.version>
     <activation.version>1.1.1</activation.version>
