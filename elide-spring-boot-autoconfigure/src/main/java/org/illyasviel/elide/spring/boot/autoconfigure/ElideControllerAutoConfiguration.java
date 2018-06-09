@@ -22,7 +22,6 @@ import java.security.Principal;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedHashMap;
-import org.illyasviel.elide.spring.boot.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,11 +185,7 @@ public class ElideControllerAutoConfiguration {
   private static String getJsonApiPath(HttpServletRequest request, String prefix) {
     String pathname = (String) request
         .getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-    if (pathname.startsWith(prefix + "/")) {
-      logger.debug("[{}][{}] forward to elide.", request.getMethod(), pathname);
-      return pathname.replaceFirst(prefix, "");
-    } else {
-      throw new ResourceNotFoundException();
-    }
+    logger.debug("[{}][{}] forward to elide.", request.getMethod(), pathname);
+    return pathname.replaceFirst(prefix, "");
   }
 }

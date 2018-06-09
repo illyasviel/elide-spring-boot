@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * 404.
  * @author olOwOlo
  */
+@Deprecated
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException {
 
