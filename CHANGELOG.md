@@ -1,3 +1,19 @@
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/illyasviel/elide-spring-boot/compare/v1.2.0...v1.3.0) (2018-06-09)
+
+
+### Bug Fixes
+
+* **controller:** avoid wildcard on the root path ([10c66ce](https://github.com/illyasviel/elide-spring-boot/commit/10c66ce))
+
+
+### Features
+
+* **dependency:** spring boot 2.0.2, elide 4.2.3 ([1720187](https://github.com/illyasviel/elide-spring-boot/commit/1720187))
+* **property:** configure to return error objects ([30153c5](https://github.com/illyasviel/elide-spring-boot/commit/30153c5))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/illyasviel/elide-spring-boot/compare/v1.1.0...v1.2.0) (2018-05-01)
 

@@ -19,7 +19,7 @@ Elide Spring-Boot-Starter will help you use [Elide](https://github.com/yahoo/eli
 <dependency>
   <groupId>org.illyasviel.elide</groupId>
   <artifactId>elide-spring-boot-starter</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
@@ -37,6 +37,7 @@ elide:
   default-page-size: 20
   max-page-size: 100
   spring-dependency-injection: true
+  return-error-objects: false
   mvc:
     enable: true
     get: true
