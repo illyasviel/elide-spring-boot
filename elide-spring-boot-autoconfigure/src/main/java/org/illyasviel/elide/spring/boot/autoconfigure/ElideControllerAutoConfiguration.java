@@ -61,7 +61,7 @@ public class ElideControllerAutoConfiguration {
 
   @Configuration
   @RestController
-  @RequestMapping(produces = JSON_API_CONTENT_TYPE)
+  @RequestMapping(value = "${elide.prefix:/api}", produces = JSON_API_CONTENT_TYPE)
   @ConditionalOnProperty(prefix = "elide.mvc", value = "get",
       havingValue = "true", matchIfMissing = true)
   public static class ElideGetController {
@@ -90,7 +90,7 @@ public class ElideControllerAutoConfiguration {
 
   @Configuration
   @RestController
-  @RequestMapping(produces = JSON_API_CONTENT_TYPE)
+  @RequestMapping(value = "${elide.prefix:/api}", produces = JSON_API_CONTENT_TYPE)
   @ConditionalOnProperty(prefix = "elide.mvc", value = "post",
       havingValue = "true", matchIfMissing = true)
   public static class ElidePostController {
@@ -118,7 +118,7 @@ public class ElideControllerAutoConfiguration {
 
   @Configuration
   @RestController
-  @RequestMapping(produces = JSON_API_CONTENT_TYPE)
+  @RequestMapping(value = "${elide.prefix:/api}", produces = JSON_API_CONTENT_TYPE)
   @ConditionalOnProperty(prefix = "elide.mvc", value = "patch",
       havingValue = "true", matchIfMissing = true)
   public static class ElidePatchController {
@@ -144,10 +144,9 @@ public class ElideControllerAutoConfiguration {
     }
   }
 
-
   @Configuration
   @RestController
-  @RequestMapping(produces = JSON_API_CONTENT_TYPE)
+  @RequestMapping(value = "${elide.prefix:/api}", produces = JSON_API_CONTENT_TYPE)
   @ConditionalOnProperty(prefix = "elide.mvc", value = "delete",
       havingValue = "true", matchIfMissing = true)
   public static class ElideDeleteController {
