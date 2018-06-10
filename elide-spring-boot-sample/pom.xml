@@ -32,6 +32,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
@@ -45,9 +50,9 @@
 
   <profiles>
     <profile>
-      <id>jdk9</id>
+      <id>jigsaw</id>
       <activation>
-        <jdk>9</jdk>
+        <jdk>[9,)</jdk>
       </activation>
       <dependencies>
         <dependency>
