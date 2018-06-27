@@ -48,5 +48,6 @@ public class ElideProperties {
     private boolean post = true;
     private boolean patch = true;
     private boolean delete = true;
+    private boolean graphql = true;
   }
 }

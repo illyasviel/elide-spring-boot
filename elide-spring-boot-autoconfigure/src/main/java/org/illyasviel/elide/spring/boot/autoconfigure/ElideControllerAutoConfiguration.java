@@ -18,17 +18,21 @@ package org.illyasviel.elide.spring.boot.autoconfigure;
 
 import com.yahoo.elide.Elide;
 import com.yahoo.elide.ElideResponse;
+import com.yahoo.elide.graphql.GraphQLRequestScope;
 import java.security.Principal;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedHashMap;
+import org.illyasviel.elide.spring.boot.graphql.GraphQLHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -178,6 +182,34 @@ public class ElideControllerAutoConfiguration {
         Principal authentication) {
       ElideResponse response = elide
           .delete(getJsonApiPath(request, elideProperties.getPrefix()), null, authentication);
+      return ResponseEntity.status(response.getResponseCode()).body(response.getBody());
+    }
+  }
+
+  @Configuration
+  @RestController
+  @RequestMapping(value = "${elide.prefix:/api}")
+  @ConditionalOnClass({ GraphQLRequestScope.class })
+  @ConditionalOnProperty(prefix = "elide.mvc", value = "graphql",
+      havingValue = "true", matchIfMissing = true)
+  public static class ElideGraphQLController {
+
+    private final GraphQLHandle graphQLHandle;
+
+    @Autowired
+    public ElideGraphQLController(Elide elide) {
+      this.graphQLHandle = new GraphQLHandle(elide);
+    }
+
+    /**
+     * Elide [GraphQL] controller.
+     */
+    @PostMapping(
+        value = "/graphql",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> graphql(@RequestBody String graphQLDocument, Principal auth) {
+      ElideResponse response = graphQLHandle.post(graphQLDocument, auth);
       return ResponseEntity.status(response.getResponseCode()).body(response.getBody());
     }
   }

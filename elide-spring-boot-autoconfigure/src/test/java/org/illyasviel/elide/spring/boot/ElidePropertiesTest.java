@@ -83,6 +83,7 @@ public class ElidePropertiesTest {
     assertThat(elideProperties.getMvc().isPost()).isTrue();
     assertThat(elideProperties.getMvc().isPatch()).isFalse();
     assertThat(elideProperties.getMvc().isDelete()).isFalse();
+    assertThat(elideProperties.getMvc().isGraphql()).isTrue();
   }
 
   @Test

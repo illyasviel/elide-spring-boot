@@ -135,6 +135,12 @@
       </dependency>
 
       <dependency>
+        <groupId>com.yahoo.elide</groupId>
+        <artifactId>elide-graphql</artifactId>
+        <version>${elide.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.illyasviel.elide</groupId>
         <artifactId>elide-spring-boot-autoconfigure</artifactId>
         <version>1.3.1-SNAPSHOT</version>
