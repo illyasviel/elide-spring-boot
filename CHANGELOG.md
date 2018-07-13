@@ -1,3 +1,13 @@
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/illyasviel/elide-spring-boot/compare/v1.3.0...v1.4.0) (2018-07-13)
+
+
+### Features
+
+* **GraphQL:** init GraphQL auto configuration ([bbb2496](https://github.com/illyasviel/elide-spring-boot/commit/bbb2496)), closes [#3](https://github.com/illyasviel/elide-spring-boot/issues/3)
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/illyasviel/elide-spring-boot/compare/v1.2.0...v1.3.0) (2018-06-09)
 

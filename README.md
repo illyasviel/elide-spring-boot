@@ -6,7 +6,7 @@
 
 Elide Spring-Boot-Starter will help you use [Elide](https://github.com/yahoo/elide) with Spring Boot
 
-- Automatically configure elide and JsonAPI controller.
+- Automatically configure elide and json:api/GraphQL controller.
 - Integrated Spring Transaction.
 - Integrated Spring Dependency Injection (optional).
 - A convenience annotation, `@ElideCheck("expression")`, help you register elide check.
@@ -19,7 +19,17 @@ Elide Spring-Boot-Starter will help you use [Elide](https://github.com/yahoo/eli
 <dependency>
   <groupId>org.illyasviel.elide</groupId>
   <artifactId>elide-spring-boot-starter</artifactId>
-  <version>1.3.0</version>
+  <version>1.4.0</version>
+</dependency>
+```
+
+The GraphQL auto configuration takes effect when `elide-graphql` on the classpath.
+
+```xml
+<dependency>
+  <groupId>com.yahoo.elide</groupId>
+  <artifactId>elide-graphql</artifactId>
+  <version>${elide.version}</version>
 </dependency>
 ```
 
@@ -44,4 +54,5 @@ elide:
     post: true
     patch: true
     delete: true
+    graphql: true
 ```
