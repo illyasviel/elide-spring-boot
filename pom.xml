@@ -20,7 +20,7 @@
 
   <groupId>org.illyasviel.elide</groupId>
   <artifactId>elide-spring-boot</artifactId>
-  <version>1.4.0</version>
+  <version>1.4.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -59,7 +59,7 @@
     <url>https://github.com/illyasviel/elide-spring-boot</url>
     <connection>scm:git:ssh://github.com/illyasviel/elide-spring-boot.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/illyasviel/elide-spring-boot.git</developerConnection>
-    <tag>v1.4.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
@@ -143,13 +143,13 @@
       <dependency>
         <groupId>org.illyasviel.elide</groupId>
         <artifactId>elide-spring-boot-autoconfigure</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.1-SNAPSHOT</version>
       </dependency>
 
       <dependency>
         <groupId>org.illyasviel.elide</groupId>
         <artifactId>elide-spring-boot-starter</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.1-SNAPSHOT</version>
       </dependency>
 
       <dependency>
