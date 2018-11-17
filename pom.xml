@@ -92,12 +92,12 @@
     <maven.compiler.testSource>1.8</maven.compiler.testSource>
     <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
 
-    <spring-boot.version>2.0.2.RELEASE</spring-boot.version>
-    <elide.version>4.2.3</elide.version>
+    <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
+    <elide.version>4.2.10</elide.version>
     <classindex.version>3.4</classindex.version>
     <jaxb-api.version>2.3.0</jaxb-api.version>
     <activation.version>1.1.1</activation.version>
-    <lombok.version>1.18.0</lombok.version>
+    <lombok.version>1.18.4</lombok.version>
   </properties>
 
   <dependencyManagement>
@@ -195,7 +195,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.1</version>
+        <version>0.8.2</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -223,7 +223,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>8.10.1</version>
+            <version>8.14</version>
           </dependency>
         </dependencies>
         <executions>
@@ -306,7 +306,7 @@
           <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>3.1.2</version>
+            <version>3.3.4</version>
             <configuration>
               <failBuildOnCVSS>8</failBuildOnCVSS>
             </configuration>
