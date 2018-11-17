@@ -1,19 +1,12 @@
 language: java
+
 jdk:
-  - oraclejdk10
-  - oraclejdk9
+  - oraclejdk11
   - oraclejdk8
+
 install:
-  # Compile sources with Java 1.8
-  # TODO jdk_switcher currently not working with jdk 10. https://github.com/travis-ci/travis-ci/issues/9368
-  - if [ "${TRAVIS_JDK_VERSION}" != "oraclejdk10" ]; then
-      jdk_switcher use oraclejdk8;
-    fi
   - chmod -R 777 ./mvnw
   - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  # Switch back to the original JDK to run the tests
-  - if [ "${TRAVIS_JDK_VERSION}" != "oraclejdk10" ]; then
-      jdk_switcher use ${TRAVIS_JDK_VERSION};
-    fi
+
 after_success:
   - ./mvnw clean test jacoco:report coveralls:report -Dcoveralls.token=$COVERALLS
