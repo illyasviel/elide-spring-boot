@@ -50,12 +50,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Elide AutoConfiguration.
+ * 
  * @author olOwOlo
  */
 @Configuration
 @EnableConfigurationProperties(ElideProperties.class)
 @ConditionalOnWebApplication
-@AutoConfigureAfter({HibernateJpaAutoConfiguration.class, WebMvcAutoConfiguration.class})
+@AutoConfigureAfter({ HibernateJpaAutoConfiguration.class, WebMvcAutoConfiguration.class })
 public class ElideAutoConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(ElideAutoConfiguration.class);
@@ -65,11 +66,8 @@ public class ElideAutoConfiguration {
    */
   @Bean
   @ConditionalOnMissingBean
-  public Elide elide(PlatformTransactionManager txManager,
-      AutowireCapableBeanFactory beanFactory,
-      ApplicationContext context,
-      EntityManager entityManager,
-      ObjectMapper objectMapper,
+  public Elide elide(PlatformTransactionManager txManager, AutowireCapableBeanFactory beanFactory,
+      ApplicationContext context, EntityManager entityManager, ObjectMapper objectMapper,
       ElideProperties elideProperties) {
     ConcurrentHashMap<String, Class<? extends Check>> checks = new ConcurrentHashMap<>();
 
@@ -79,18 +77,14 @@ public class ElideAutoConfiguration {
     EntityDictionary entityDictionary = new EntityDictionary(checks);
     RSQLFilterDialect rsqlFilterDialect = new RSQLFilterDialect(entityDictionary);
 
-    DataStore springDataStore = new SpringHibernateDataStore(txManager, beanFactory, entityManager,
-        elideProperties, true, ScrollMode.FORWARD_ONLY);
+    DataStore springDataStore = new SpringHibernateDataStore(txManager, beanFactory, entityManager, elideProperties,
+        true, ScrollMode.FORWARD_ONLY);
 
-    Elide elide = new Elide(new ElideSettingsBuilder(springDataStore)
-        .withJsonApiMapper(new JsonApiMapper(entityDictionary, objectMapper))
-        .withEntityDictionary(entityDictionary)
-        .withJoinFilterDialect(rsqlFilterDialect)
-        .withSubqueryFilterDialect(rsqlFilterDialect)
-        .withDefaultPageSize(elideProperties.getDefaultPageSize())
+    Elide elide = new Elide(new ElideSettingsBuilder(springDataStore).withJsonApiMapper(new JsonApiMapper(objectMapper))
+        .withEntityDictionary(entityDictionary).withJoinFilterDialect(rsqlFilterDialect)
+        .withSubqueryFilterDialect(rsqlFilterDialect).withDefaultPageSize(elideProperties.getDefaultPageSize())
         .withDefaultMaxPageSize(elideProperties.getMaxPageSize())
-        .withReturnErrorObjects(elideProperties.isReturnErrorObjects())
-        .build());
+        .withReturnErrorObjects(elideProperties.isReturnErrorObjects()).build());
 
     // scan life cycle hooks
     scanLifeCycleHook(entityDictionary, context);
@@ -105,12 +99,11 @@ public class ElideAutoConfiguration {
     for (Class<?> clazz : ClassIndex.getAnnotated(ElideCheck.class)) {
       ElideCheck elideCheck = clazz.getAnnotation(ElideCheck.class);
       if (Check.class.isAssignableFrom(clazz)) {
-        logger.debug("Register Elide Check [{}] with expression [{}]",
-            clazz.getCanonicalName(), elideCheck.value());
+        logger.debug("Register Elide Check [{}] with expression [{}]", clazz.getCanonicalName(), elideCheck.value());
         checks.put(elideCheck.value(), clazz.asSubclass(Check.class));
       } else {
-        throw new RuntimeException("The class[" + clazz.getCanonicalName()
-            + "] being annotated with @ElideCheck must be a Check.");
+        throw new RuntimeException(
+            "The class[" + clazz.getCanonicalName() + "] being annotated with @ElideCheck must be a Check.");
       }
     }
   }
@@ -136,18 +129,14 @@ public class ElideAutoConfiguration {
         }
 
         if (elideHook.fieldOrMethodName().equals("")) {
-          entityDictionary.bindTrigger(entity, elideHook.lifeCycle(),
-              (LifeCycleHook) context.getBean(clazz));
+          entityDictionary.bindTrigger(entity, elideHook.lifeCycle(), (LifeCycleHook) context.getBean(clazz));
         } else {
-          entityDictionary.bindTrigger(entity, elideHook.lifeCycle(),
-              elideHook.fieldOrMethodName(), (LifeCycleHook) context.getBean(clazz));
+          entityDictionary.bindTrigger(entity, elideHook.lifeCycle(), elideHook.fieldOrMethodName(),
+              (LifeCycleHook) context.getBean(clazz));
         }
 
-        logger.debug("Register Elide Function Hook: bindTrigger({}, {}, \"{}\", {})",
-            entity.getCanonicalName(),
-            elideHook.lifeCycle().getSimpleName(),
-            elideHook.fieldOrMethodName(),
-            clazz.getCanonicalName());
+        logger.debug("Register Elide Function Hook: bindTrigger({}, {}, \"{}\", {})", entity.getCanonicalName(),
+            elideHook.lifeCycle().getSimpleName(), elideHook.fieldOrMethodName(), clazz.getCanonicalName());
 
       } else {
         throw new RuntimeException("The class[" + clazz.getCanonicalName()
