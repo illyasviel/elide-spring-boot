@@ -2,8 +2,8 @@ language: java
 
 jdk:
   - oraclejdk11
-  
-sudo: false
+  - openjdk8
+
 addons:
   apt:
     packages:
