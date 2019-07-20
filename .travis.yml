@@ -1,14 +1,18 @@
-dist: trusty
-
 language: java
 
 jdk:
   - oraclejdk11
-  - oraclejdk8
+  
+sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 
 install:
   - chmod -R 777 ./mvnw
   - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
 
 after_success:
   - ./mvnw clean test jacoco:report coveralls:report -Dcoveralls.token=$COVERALLS
