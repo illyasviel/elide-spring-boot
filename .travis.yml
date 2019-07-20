@@ -4,11 +4,6 @@ jdk:
   - oraclejdk11
   - openjdk8
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-
 install:
   - chmod -R 777 ./mvnw
   - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
