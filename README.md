@@ -4,6 +4,8 @@
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.illyasviel.elide/elide-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.illyasviel.elide/elide-spring-boot-starter)
 
+🎉 **Now, Elide has official support for Spring, please check out [Elide Spring Artifacts](https://github.com/yahoo/elide/tree/master/elide-spring).** 🎉
+
 Elide Spring-Boot-Starter will help you use [Elide](https://github.com/yahoo/elide) with Spring Boot
 
 - Automatically configure elide and json:api/GraphQL controller.
