@@ -50,12 +50,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Elide AutoConfiguration.
+ * 
  * @author olOwOlo
  */
 @Configuration
 @EnableConfigurationProperties(ElideProperties.class)
 @ConditionalOnWebApplication
-@AutoConfigureAfter({HibernateJpaAutoConfiguration.class, WebMvcAutoConfiguration.class})
+@AutoConfigureAfter({ HibernateJpaAutoConfiguration.class, WebMvcAutoConfiguration.class })
 public class ElideAutoConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(ElideAutoConfiguration.class);
@@ -83,7 +84,7 @@ public class ElideAutoConfiguration {
         elideProperties, true, ScrollMode.FORWARD_ONLY);
 
     Elide elide = new Elide(new ElideSettingsBuilder(springDataStore)
-        .withJsonApiMapper(new JsonApiMapper(entityDictionary, objectMapper))
+        .withJsonApiMapper(new JsonApiMapper(objectMapper))
         .withEntityDictionary(entityDictionary)
         .withJoinFilterDialect(rsqlFilterDialect)
         .withSubqueryFilterDialect(rsqlFilterDialect)
@@ -105,8 +106,8 @@ public class ElideAutoConfiguration {
     for (Class<?> clazz : ClassIndex.getAnnotated(ElideCheck.class)) {
       ElideCheck elideCheck = clazz.getAnnotation(ElideCheck.class);
       if (Check.class.isAssignableFrom(clazz)) {
-        logger.debug("Register Elide Check [{}] with expression [{}]",
-            clazz.getCanonicalName(), elideCheck.value());
+        logger.debug("Register Elide Check [{}] with expression [{}]", clazz.getCanonicalName(),
+            elideCheck.value());
         checks.put(elideCheck.value(), clazz.asSubclass(Check.class));
       } else {
         throw new RuntimeException("The class[" + clazz.getCanonicalName()
@@ -144,10 +145,8 @@ public class ElideAutoConfiguration {
         }
 
         logger.debug("Register Elide Function Hook: bindTrigger({}, {}, \"{}\", {})",
-            entity.getCanonicalName(),
-            elideHook.lifeCycle().getSimpleName(),
-            elideHook.fieldOrMethodName(),
-            clazz.getCanonicalName());
+            entity.getCanonicalName(), elideHook.lifeCycle().getSimpleName(),
+            elideHook.fieldOrMethodName(), clazz.getCanonicalName());
 
       } else {
         throw new RuntimeException("The class[" + clazz.getCanonicalName()

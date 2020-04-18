@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.illyasviel.elide</groupId>
@@ -92,12 +93,12 @@
     <maven.compiler.testSource>1.8</maven.compiler.testSource>
     <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
 
-    <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
-    <elide.version>4.2.10</elide.version>
-    <classindex.version>3.4</classindex.version>
+    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+    <elide.version>4.4.5</elide.version>
+    <classindex.version>3.7</classindex.version>
     <jaxb-api.version>2.3.0</jaxb-api.version>
     <activation.version>1.1.1</activation.version>
-    <lombok.version>1.18.4</lombok.version>
+    <lombok.version>1.18.8</lombok.version>
   </properties>
 
   <dependencyManagement>
@@ -179,6 +180,7 @@
   </dependencyManagement>
 
   <build>
+  	<pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -246,6 +248,7 @@
         </executions>
       </plugin>
     </plugins>
+    </pluginManagement>
   </build>
 
   <profiles>

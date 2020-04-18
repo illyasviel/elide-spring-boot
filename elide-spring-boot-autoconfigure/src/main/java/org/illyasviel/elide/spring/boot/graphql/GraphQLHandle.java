@@ -1,12 +1,9 @@
 /*
  * Copyright (c) 2018 the original author or authors.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +32,7 @@ import com.yahoo.elide.graphql.GraphQLRequestScope;
 import com.yahoo.elide.graphql.ModelBuilder;
 import com.yahoo.elide.graphql.PersistentResourceFetcher;
 import com.yahoo.elide.security.User;
+
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -51,13 +49,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * GraphQLHandle.
- * <br>
- * Based on <a href="https://github.com/yahoo/elide/blob/master/elide-graphql/src/main/java/com/yahoo/elide/graphql/GraphQLEndpoint.java">GraphQLEndpoint.java</a>
+ * GraphQLHandle. <br>
+ * Based on <a href=
+ * "https://github.com/yahoo/elide/blob/master/elide-graphql/src/main/java/com/yahoo/elide/graphql/GraphQLEndpoint.java">GraphQLEndpoint.java</a>
  * Latest commit is 9d6e11efa0ba26f81286c9b0a3b298467359900a.
  * <ul>
- *   <li>SecurityContext -&gt; Object(opaqueUser)</li>
- *   <li>javax.ws.rs.core.Response -&gt; ElideResponse</li>
+ * <li>SecurityContext -&gt; Object(opaqueUser)</li>
+ * <li>javax.ws.rs.core.Response -&gt; ElideResponse</li>
  * </ul>
  *
  * @author olOwOlo
@@ -81,14 +79,14 @@ public class GraphQLHandle {
     this.elideSettings = elide.getElideSettings();
     PersistentResourceFetcher fetcher = new PersistentResourceFetcher(elide.getElideSettings());
     ModelBuilder builder = new ModelBuilder(elide.getElideSettings().getDictionary(), fetcher);
-    this.api = new GraphQL(builder.build());
+    this.api = GraphQL.newGraphQL(builder.build()).build();
   }
 
   /**
    * Create handler.
    *
    * @param graphQLDocument post data as jsonapi document
-   * @param opaqueUser opaqueUser
+   * @param opaqueUser      opaqueUser
    * @return response
    */
   public ElideResponse post(String graphQLDocument, Object opaqueUser) {
@@ -100,54 +98,53 @@ public class GraphQLHandle {
       topLevel = mapper.readTree(graphQLDocument);
     } catch (IOException e) {
       log.debug("Invalid json body provided to GraphQL", e);
-      // NOTE: Can't get at isVerbose setting here for hardcoding to false. If necessary, we can refactor
+      // NOTE: Can't get at isVerbose setting here for hardcoding to false. If
+      // necessary, we can refactor
       // so this can be set appropriately.
       return buildErrorResponse(new InvalidEntityBodyException(graphQLDocument), false);
     }
 
-    Function<JsonNode, ElideResponse> executeRequest =
-        (node) -> executeGraphQLRequest(mapper, opaqueUser, graphQLDocument, node);
+    Function<JsonNode, ElideResponse> executeRequest = (node) -> executeGraphQLRequest(mapper,
+        opaqueUser, graphQLDocument, node);
 
     if (topLevel.isArray()) {
       Iterator<JsonNode> nodeIterator = topLevel.iterator();
       Iterable<JsonNode> nodeIterable = () -> nodeIterator;
       // NOTE: Create a non-parallel stream
-      // It's unclear whether or not the expectations of the caller would be that requests are intended
+      // It's unclear whether or not the expectations of the caller would be that
+      // requests are intended
       // to run serially even outside of a single transaction. We should revisit this.
       Stream<JsonNode> nodeStream = StreamSupport.stream(nodeIterable.spliterator(), false);
-      ArrayNode result = nodeStream
-          .map(executeRequest)
-          .map(response -> {
-            try {
-              return mapper.readTree(response.getBody());
-            } catch (IOException e) {
-              log.debug("Caught an IO exception while trying to read response body");
-              return JsonNodeFactory.instance.objectNode();
-            }
-          })
-          .reduce(JsonNodeFactory.instance.arrayNode(),
-              (arrayNode, node) -> arrayNode.add(node),
+      ArrayNode result = nodeStream.map(executeRequest).map(response -> {
+        try {
+          return mapper.readTree(response.getBody());
+        } catch (IOException e) {
+          log.debug("Caught an IO exception while trying to read response body");
+          return JsonNodeFactory.instance.objectNode();
+        }
+      })
+          .reduce(JsonNodeFactory.instance.arrayNode(), (arrayNode, node) -> arrayNode.add(node),
               (left, right) -> left.addAll(right));
       try {
         return new ElideResponse(HttpStatus.SC_OK, mapper.writeValueAsString(result));
       } catch (JsonProcessingException e) {
         log.error("An unexpected error occurred trying to serialize array response.", e);
-        throw new RuntimeException(e);  // 500
+        throw new RuntimeException(e); // 500
       }
     }
 
     return executeRequest.apply(topLevel);
   }
 
-  private ElideResponse executeGraphQLRequest(
-      ObjectMapper mapper,
+  private ElideResponse executeGraphQLRequest(ObjectMapper mapper,
       Object opaqueUser,
       String graphQLDocument,
       JsonNode jsonDocument) {
     boolean isVerbose = false;
     try (DataStoreTransaction tx = elide.getDataStore().beginTransaction()) {
       final User user = tx.accessUser(opaqueUser);
-      GraphQLRequestScope requestScope = new GraphQLRequestScope(tx, user, elide.getElideSettings());
+      GraphQLRequestScope requestScope = new GraphQLRequestScope(tx, user,
+          elide.getElideSettings());
       isVerbose = requestScope.getPermissionExecutor().isVerbose();
 
       if (!jsonDocument.has(QUERY)) {
@@ -156,12 +153,12 @@ public class GraphQLHandle {
 
       String query = jsonDocument.get(QUERY).asText();
 
-      // Logging all queries. It is recommended to put any private information that shouldn't be logged into
+      // Logging all queries. It is recommended to put any private information that
+      // shouldn't be logged into
       // the "variables" section of your query. Variable values are not logged.
       log.info("Processing GraphQL query:\n{}", query);
 
-      ExecutionInput.Builder executionInput = new ExecutionInput.Builder()
-          .context(requestScope)
+      ExecutionInput.Builder executionInput = new ExecutionInput.Builder().context(requestScope)
           .query(query);
 
       if (jsonDocument.has(OPERATION_NAME) && !jsonDocument.get(OPERATION_NAME).isNull()) {
@@ -169,7 +166,8 @@ public class GraphQLHandle {
       }
 
       if (jsonDocument.has(VARIABLES) && !jsonDocument.get(VARIABLES).isNull()) {
-        Map<String, Object> variables = mapper.convertValue(jsonDocument.get(VARIABLES), Map.class);
+        Map<String, Object> variables = mapper.convertValue(jsonDocument.get(VARIABLES),
+            Map.class);
         executionInput.variables(variables);
       }
 
@@ -201,7 +199,8 @@ public class GraphQLHandle {
         requestScope.getPermissionExecutor().printCheckStats();
       }
 
-      return new ElideResponse(HttpStatus.SC_OK, mapper.writeValueAsString(result.toSpecification()));
+      return new ElideResponse(HttpStatus.SC_OK,
+          mapper.writeValueAsString(result.toSpecification()));
     } catch (WebApplicationException e) {
       log.debug("WebApplicationException", e);
       throw e;
@@ -256,12 +255,13 @@ public class GraphQLHandle {
     ObjectMapper mapper = elide.getMapper().getObjectMapper();
     JsonNode errorNode;
     if (!(error instanceof CustomErrorException) && elideSettings.isReturnErrorObjects()) {
-      ErrorObjects errors = ErrorObjects.builder().addError()
-          .with("message", isVerbose ? error.getVerboseMessage() : error.toString()).build();
+      ErrorObjects errors = ErrorObjects.builder()
+          .addError()
+          .with("message", isVerbose ? error.getVerboseMessage() : error.toString())
+          .build();
       errorNode = mapper.convertValue(errors, JsonNode.class);
     } else {
-      errorNode = isVerbose
-          ? error.getVerboseErrorResponse().getRight()
+      errorNode = isVerbose ? error.getVerboseErrorResponse().getRight()
           : error.getErrorResponse().getRight();
     }
     String errorBody;
